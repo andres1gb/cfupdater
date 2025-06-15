@@ -1,0 +1,16 @@
+[main]
+ip_extractor = "cloudflare"
+log_file = "./logs/cfupdater.log"
+log_level = 3
+
+[[zones]] # domain1 config
+dns_api = "cloudflare"
+zone_id = "your_cloudflare_zone_id"
+secret = "your_cloudflare_api_token"
+domains = ["test.domain1", "test2.domain1"]
+
+[[zones]] # domain2 config
+dns_api = "cloudflare"
+zone_id = "your_cloudflare_zone_id"
+secret = "your_cloudflare_api_token"
+domains = ["test.domain2", "test2.domain2"]
