@@ -21,7 +21,7 @@ type DnsRecord struct {
 	ID        string `json:"id"`
 	Name      string `json:"name"`
 	Type      string `json:"type"`
-	Content   string `json:"content"`
+	IP        string `json:"content"`
 	Proxiable bool   `json:"proxiable"`
 	Proxied   bool   `json:"proxied"`
 	TTL       int    `json:"ttl"`
@@ -50,7 +50,7 @@ type ZoneInfo struct {
 	} `json:"result_info"`
 }
 
-type DomainIds map[string]string
+type DomainIds map[string]DnsRecord
 
 func (c *Cloudflare) GetName() string {
 	return "cloudflare"
@@ -84,7 +84,7 @@ func (c *Cloudflare) callApi(method string, url string, body []byte, zone Config
 }
 
 func (c *Cloudflare) getRecords(zone ConfigZone) (DomainIds, error) {
-	domainIds := make(map[string]string, 0)
+	domainIds := make(map[string]DnsRecord, 0)
 	url := fmt.Sprintf(baseUrl, zone.Zone)
 	res, err := c.callApi("GET", url, nil, zone)
 	if err != nil {
@@ -97,7 +97,7 @@ func (c *Cloudflare) getRecords(zone ConfigZone) (DomainIds, error) {
 	}
 	for _, result := range result.Result {
 		if result.Type == "A" {
-			domainIds[result.Name] = result.ID
+			domainIds[result.Name] = result
 		}
 	}
 
@@ -122,7 +122,10 @@ func (c *Cloudflare) Update(zone ConfigZone, ip string) (code UpdateResult, err 
 	}
 
 	for _, record := range zone.Domains {
-		id := records[record]
+		if records[record].IP == ip {
+			continue
+		}
+		id := records[record].ID
 		url := fmt.Sprintf(baseUrl, zone.Zone) + id
 		payload := map[string]interface{}{
 			"type":    "A", // TODO: configurable

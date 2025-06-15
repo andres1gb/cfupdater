@@ -18,5 +18,5 @@ This is a very early version, and lots of work is to be done. A few improvements
 - Allow for other type of records, currently only A records are allowed
 - Skip single records. Currently, if a record for a zone doesn't exist, the whole zone will be skipped without update
 - Logs!!!
--Skip records when the IP address is up to date. 
+- Add tests
 - Add other DNS providers.
